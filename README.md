@@ -1,10 +1,10 @@
-# 📈 A股股票推荐系统
+# 📈 A-Share Stock Recommendation System
 
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://your-app-name.streamlit.app)
 
-## 智能股票分析与推荐
+## Intelligent Stock Analysis and Recommendation
 
 **Arts & Advanced Big Data - Week 10**  
 **Sungkyunkwan University** | Prof. Jahwan Koo
 
-[**📈 开始分析**](https://your-app-name.streamlit.app)
+[**📈 Start Analysis**](https://your-app-name.streamlit.app)
