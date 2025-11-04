@@ -8,117 +8,117 @@ from datetime import datetime, timedelta
 import requests
 import json
 
-# 页面配置
+# Page configuration
 st.set_page_config(
-    page_title="A股股票推荐系统",
+    page_title="A-Share Stock Recommendation System",
     page_icon="📈",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# 应用标题
-st.title("📈 A股股票推荐系统")
+# App title
+st.title("📈 A-Share Stock Recommendation System")
 st.markdown("""
-### 初学者也能轻松理解的股票分析工具
-**基于技术指标和基本面的智能推荐系统**
+### Easy-to-understand stock analysis tool for beginners
+**Intelligent recommendation system based on technical indicators and fundamentals**
 """)
 
 class AStockRecommender:
     def __init__(self):
-        # 沪深300成分股示例数据
+        # Sample data for CSI 300 constituent stocks
         self.stocks_data = self.generate_sample_data()
         
     def generate_sample_data(self):
-        """生成示例股票数据"""
+        """Generate sample stock data"""
         stocks = [
             {
-                'code': '000858', 'name': '五粮液', 'sector': '消费',
+                'code': '000858', 'name': 'Wuliangye', 'sector': 'Consumer',
                 'current_price': 168.50, 'change_rate': 2.34,
                 'volume': 8.5, 'market_cap': 6500,
                 'pe_ratio': 28.5, 'pb_ratio': 6.2,
                 'revenue_growth': 15.2, 'profit_growth': 18.7,
-                'rsi': 62.3, 'macd_signal': '金叉', 'bollinger_position': '中轨',
-                'recommend_score': 92.5, 'risk_level': '中低',
-                'tags': ['白酒龙头', '高ROE', '稳定增长']
+                'rsi': 62.3, 'macd_signal': 'Golden Cross', 'bollinger_position': 'Middle Band',
+                'recommend_score': 92.5, 'risk_level': 'Low-Medium',
+                'tags': ['Liquor Leader', 'High ROE', 'Stable Growth']
             },
             {
-                'code': '600519', 'name': '贵州茅台', 'sector': '消费',
+                'code': '600519', 'name': 'Kweichow Moutai', 'sector': 'Consumer',
                 'current_price': 1750.80, 'change_rate': 1.56,
                 'volume': 12.3, 'market_cap': 22000,
                 'pe_ratio': 35.2, 'pb_ratio': 12.8,
                 'revenue_growth': 12.8, 'profit_growth': 16.3,
-                'rsi': 58.7, 'macd_signal': '金叉', 'bollinger_position': '上轨',
-                'recommend_score': 88.7, 'risk_level': '低',
-                'tags': ['酱香龙头', '稀缺性', '品牌价值']
+                'rsi': 58.7, 'macd_signal': 'Golden Cross', 'bollinger_position': 'Upper Band',
+                'recommend_score': 88.7, 'risk_level': 'Low',
+                'tags': ['Liquor Leader', 'Scarcity', 'Brand Value']
             },
             {
-                'code': '300750', 'name': '宁德时代', 'sector': '新能源',
+                'code': '300750', 'name': 'CATL', 'sector': 'New Energy',
                 'current_price': 198.30, 'change_rate': 3.45,
                 'volume': 15.8, 'market_cap': 8700,
                 'pe_ratio': 42.1, 'pb_ratio': 8.9,
                 'revenue_growth': 25.7, 'profit_growth': 32.1,
-                'rsi': 65.2, 'macd_signal': '金叉', 'bollinger_position': '上轨',
-                'recommend_score': 85.3, 'risk_level': '中',
-                'tags': ['电池龙头', '高成长', '新能源']
+                'rsi': 65.2, 'macd_signal': 'Golden Cross', 'bollinger_position': 'Upper Band',
+                'recommend_score': 85.3, 'risk_level': 'Medium',
+                'tags': ['Battery Leader', 'High Growth', 'New Energy']
             },
             {
-                'code': '601318', 'name': '中国平安', 'sector': '金融',
+                'code': '601318', 'name': 'Ping An Insurance', 'sector': 'Financial',
                 'current_price': 48.92, 'change_rate': 0.85,
                 'volume': 9.2, 'market_cap': 8900,
                 'pe_ratio': 8.9, 'pb_ratio': 1.2,
                 'revenue_growth': 5.3, 'profit_growth': 7.8,
-                'rsi': 45.6, 'macd_signal': '即将金叉', 'bollinger_position': '下轨',
-                'recommend_score': 82.1, 'risk_level': '低',
-                'tags': ['保险龙头', '低估值', '高分红']
+                'rsi': 45.6, 'macd_signal': 'Approaching Golden Cross', 'bollinger_position': 'Lower Band',
+                'recommend_score': 82.1, 'risk_level': 'Low',
+                'tags': ['Insurance Leader', 'Low Valuation', 'High Dividend']
             },
             {
-                'code': '000333', 'name': '美的集团', 'sector': '家电',
+                'code': '000333', 'name': 'Midea Group', 'sector': 'Home Appliances',
                 'current_price': 56.78, 'change_rate': 1.23,
                 'volume': 6.7, 'market_cap': 4000,
                 'pe_ratio': 15.6, 'pb_ratio': 3.2,
                 'revenue_growth': 8.9, 'profit_growth': 12.4,
-                'rsi': 52.3, 'macd_signal': '金叉', 'bollinger_position': '中轨',
-                'recommend_score': 79.8, 'risk_level': '中低',
-                'tags': ['家电龙头', '全球化', '稳定现金流']
+                'rsi': 52.3, 'macd_signal': 'Golden Cross', 'bollinger_position': 'Middle Band',
+                'recommend_score': 79.8, 'risk_level': 'Low-Medium',
+                'tags': ['Home Appliance Leader', 'Globalization', 'Stable Cash Flow']
             },
             {
-                'code': '600036', 'name': '招商银行', 'sector': '金融',
+                'code': '600036', 'name': 'China Merchants Bank', 'sector': 'Financial',
                 'current_price': 32.45, 'change_rate': 0.93,
                 'volume': 11.5, 'market_cap': 8200,
                 'pe_ratio': 6.8, 'pb_ratio': 1.1,
                 'revenue_growth': 7.2, 'profit_growth': 9.5,
-                'rsi': 48.9, 'macd_signal': '即将金叉', 'bollinger_position': '下轨',
-                'recommend_score': 77.6, 'risk_level': '低',
-                'tags': ['零售银行', '资产质量', '高ROE']
+                'rsi': 48.9, 'macd_signal': 'Approaching Golden Cross', 'bollinger_position': 'Lower Band',
+                'recommend_score': 77.6, 'risk_level': 'Low',
+                'tags': ['Retail Banking', 'Asset Quality', 'High ROE']
             },
             {
-                'code': '000001', 'name': '平安银行', 'sector': '金融',
+                'code': '000001', 'name': 'Ping An Bank', 'sector': 'Financial',
                 'current_price': 12.34, 'change_rate': 1.15,
                 'volume': 7.8, 'market_cap': 2400,
                 'pe_ratio': 7.2, 'pb_ratio': 0.9,
                 'revenue_growth': 6.8, 'profit_growth': 8.9,
-                'rsi': 46.7, 'macd_signal': '即将金叉', 'bollinger_position': '下轨',
-                'recommend_score': 75.2, 'risk_level': '中',
-                'tags': ['数字化转型', '零售转型', '低估']
+                'rsi': 46.7, 'macd_signal': 'Approaching Golden Cross', 'bollinger_position': 'Lower Band',
+                'recommend_score': 75.2, 'risk_level': 'Medium',
+                'tags': ['Digital Transformation', 'Retail Transformation', 'Undervalued']
             },
             {
-                'code': '601888', 'name': '中国中免', 'sector': '消费',
+                'code': '601888', 'name': 'China Tourism Group', 'sector': 'Consumer',
                 'current_price': 89.67, 'change_rate': 2.78,
                 'volume': 5.3, 'market_cap': 1800,
                 'pe_ratio': 32.1, 'pb_ratio': 7.8,
                 'revenue_growth': 18.9, 'profit_growth': 22.4,
-                'rsi': 61.8, 'macd_signal': '金叉', 'bollinger_position': '中轨',
-                'recommend_score': 83.4, 'risk_level': '中',
-                'tags': ['免税龙头', '消费升级', '渠道优势']
+                'rsi': 61.8, 'macd_signal': 'Golden Cross', 'bollinger_position': 'Middle Band',
+                'recommend_score': 83.4, 'risk_level': 'Medium',
+                'tags': ['Duty-free Leader', 'Consumption Upgrade', 'Channel Advantage']
             }
         ]
         return pd.DataFrame(stocks)
     
     def calculate_recommendation_score(self, row):
-        """计算推荐分数（模拟算法）"""
+        """Calculate recommendation score (simulated algorithm)"""
         score = 0
         
-        # 估值因素 (30%)
+        # Valuation factors (30%)
         if row['pe_ratio'] < 15:
             score += 30
         elif row['pe_ratio'] < 25:
@@ -128,14 +128,14 @@ class AStockRecommender:
         else:
             score += 15
         
-        # 成长因素 (30%)
+        # Growth factors (30%)
         growth_score = min(30, row['profit_growth'] * 0.8)
         score += growth_score
         
-        # 技术指标 (20%)
-        if row['macd_signal'] == '金叉':
+        # Technical indicators (20%)
+        if row['macd_signal'] == 'Golden Cross':
             score += 15
-        elif row['macd_signal'] == '即将金叉':
+        elif row['macd_signal'] == 'Approaching Golden Cross':
             score += 10
         else:
             score += 5
@@ -143,8 +143,8 @@ class AStockRecommender:
         if row['rsi'] > 30 and row['rsi'] < 70:
             score += 5
         
-        # 市场地位 (20%)
-        if '龙头' in str(row['tags']):
+        # Market position (20%)
+        if 'Leader' in str(row['tags']):
             score += 20
         else:
             score += 10
@@ -152,40 +152,40 @@ class AStockRecommender:
         return min(100, score)
     
     def get_recommended_stocks(self, min_market_cap=1000, max_pe=50, sector_filter=None):
-        """获取推荐股票列表"""
+        """Get recommended stock list"""
         df = self.stocks_data.copy()
         
-        # 应用过滤器
+        # Apply filters
         if min_market_cap:
             df = df[df['market_cap'] >= min_market_cap]
         
         if max_pe:
             df = df[df['pe_ratio'] <= max_pe]
             
-        if sector_filter and sector_filter != "全部":
+        if sector_filter and sector_filter != "All":
             df = df[df['sector'] == sector_filter]
         
-        # 计算推荐分数
+        # Calculate recommendation score
         df['recommend_score'] = df.apply(self.calculate_recommendation_score, axis=1)
         
-        # 按分数排序
+        # Sort by score
         df = df.sort_values('recommend_score', ascending=False)
         
         return df
 
-# 初始化推荐系统
+# Initialize recommendation system
 recommender = AStockRecommender()
 
-# 侧边栏 - 分析设置
-st.sidebar.header("🔧 分析设置")
+# Sidebar - Analysis Settings
+st.sidebar.header("🔧 Analysis Settings")
 
-# 行业筛选
-sectors = ["全部", "消费", "新能源", "金融", "家电"]
-selected_sector = st.sidebar.selectbox("行业筛选", sectors, index=0)
+# Sector filter
+sectors = ["All", "Consumer", "New Energy", "Financial", "Home Appliances"]
+selected_sector = st.sidebar.selectbox("Sector Filter", sectors, index=0)
 
-# 估值筛选
+# Valuation filter
 min_market_cap = st.sidebar.number_input(
-    "最小市值（亿元）", 
+    "Minimum Market Cap (Billion CNY)", 
     min_value=0, 
     max_value=10000, 
     value=1000,
@@ -193,163 +193,163 @@ min_market_cap = st.sidebar.number_input(
 )
 
 max_pe = st.sidebar.slider(
-    "最大市盈率(PE)", 
+    "Maximum P/E Ratio", 
     min_value=0, 
     max_value=100, 
     value=50
 )
 
-# 风险偏好
+# Risk preference
 risk_tolerance = st.sidebar.select_slider(
-    "风险承受能力",
-    options=["保守", "稳健", "平衡", "成长", "激进"],
-    value="平衡"
+    "Risk Tolerance",
+    options=["Conservative", "Moderate", "Balanced", "Growth", "Aggressive"],
+    value="Balanced"
 )
 
-# 更新按钮
-if st.sidebar.button("🔄 重新分析", type="primary"):
+# Update button
+if st.sidebar.button("🔄 Re-analyze", type="primary"):
     st.rerun()
 
-# 主内容区域
+# Main content area
 st.markdown("---")
 
-# 获取推荐股票
+# Get recommended stocks
 recommended_stocks = recommender.get_recommended_stocks(
     min_market_cap=min_market_cap,
     max_pe=max_pe,
     sector_filter=selected_sector
 )
 
-# 显示推荐股票
-st.subheader(f"🏆 推荐股票 TOP {len(recommended_stocks)}")
+# Display recommended stocks
+st.subheader(f"🏆 Recommended Stocks TOP {len(recommended_stocks)}")
 
 if len(recommended_stocks) > 0:
-    # 创建两列布局
+    # Create two-column layout
     cols = st.columns(2)
     
     for idx, (_, stock) in enumerate(recommended_stocks.iterrows()):
         col = cols[idx % 2]
         
         with col:
-            # 创建卡片容器
+            # Create card container
             with st.container():
-                # 标题行
-                st.markdown(f"### {idx + 1}위. {stock['name']} ({stock['code']})")
+                # Title row
+                st.markdown(f"### #{idx + 1} {stock['name']} ({stock['code']})")
                 
-                # 价格和基本信息
+                # Price and basic info
                 col1, col2 = st.columns(2)
                 with col1:
                     st.metric(
-                        "当前价", 
+                        "Current Price", 
                         f"¥{stock['current_price']:.2f}",
                         delta=f"+{stock['change_rate']}%"
                     )
                 with col2:
-                    st.metric("市值", f"{stock['market_cap']}亿元")
+                    st.metric("Market Cap", f"{stock['market_cap']}B CNY")
                 
-                # 详细信息
-                with st.expander("📊 详细分析", expanded=True):
-                    # 财务指标
-                    st.write("**财务指标:**")
+                # Detailed information
+                with st.expander("📊 Detailed Analysis", expanded=True):
+                    # Financial indicators
+                    st.write("**Financial Indicators:**")
                     col_f1, col_f2, col_f3 = st.columns(3)
                     with col_f1:
-                        st.write(f"PE: {stock['pe_ratio']}")
+                        st.write(f"P/E: {stock['pe_ratio']}")
                     with col_f2:
-                        st.write(f"PB: {stock['pb_ratio']}")
+                        st.write(f"P/B: {stock['pb_ratio']}")
                     with col_f3:
-                        st.write(f"营收增长: {stock['revenue_growth']}%")
+                        st.write(f"Revenue Growth: {stock['revenue_growth']}%")
                     
-                    # 技术指标
-                    st.write("**技术指标:**")
+                    # Technical indicators
+                    st.write("**Technical Indicators:**")
                     col_t1, col_t2, col_t3 = st.columns(3)
                     with col_t1:
                         st.write(f"RSI: {stock['rsi']}")
                     with col_t2:
                         st.write(f"MACD: {stock['macd_signal']}")
                     with col_t3:
-                        st.write(f"布林带: {stock['bollinger_position']}")
+                        st.write(f"Bollinger: {stock['bollinger_position']}")
                     
-                    # 投资建议
-                    st.write("**投资建议:**")
+                    # Investment recommendation
+                    st.write("**Investment Recommendation:**")
                     
-                    # 根据分数显示不同的推荐强度
+                    # Show different recommendation strength based on score
                     score = stock['recommend_score']
                     if score >= 90:
-                        st.success("🚀 强烈买入 - 综合评分优秀")
+                        st.success("🚀 Strong Buy - Excellent overall score")
                     elif score >= 80:
-                        st.info("📈 建议买入 - 综合评分良好")
+                        st.info("📈 Recommended Buy - Good overall score")
                     elif score >= 70:
-                        st.warning("🤔 谨慎买入 - 综合评分一般")
+                        st.warning("🤔 Cautious Buy - Average overall score")
                     else:
-                        st.error("⏸️ 观望 - 需要更多信号")
+                        st.error("⏸️ Watch - Need more signals")
                     
-                    # 具体理由
+                    # Specific reasons
                     reasons = []
                     if stock['pe_ratio'] < 20:
-                        reasons.append("估值合理")
+                        reasons.append("Reasonable valuation")
                     if stock['profit_growth'] > 15:
-                        reasons.append("高成长性")
-                    if '龙头' in str(stock['tags']):
-                        reasons.append("行业龙头地位")
-                    if stock['macd_signal'] == '金叉':
-                        reasons.append("技术面金叉信号")
+                        reasons.append("High growth potential")
+                    if 'Leader' in str(stock['tags']):
+                        reasons.append("Industry leader position")
+                    if stock['macd_signal'] == 'Golden Cross':
+                        reasons.append("Technical golden cross signal")
                     
                     if reasons:
-                        st.write("**推荐理由:** " + "、".join(reasons))
+                        st.write("**Reasons:** " + ", ".join(reasons))
                     
-                    # 风险提示
-                    if stock['risk_level'] == '高':
-                        st.error(f"⚠️ 风险等级: {stock['risk_level']}")
-                    elif stock['risk_level'] == '中':
-                        st.warning(f"⚠️ 风险等级: {stock['risk_level']}")
+                    # Risk warning
+                    if stock['risk_level'] == 'High':
+                        st.error(f"⚠️ Risk Level: {stock['risk_level']}")
+                    elif stock['risk_level'] == 'Medium':
+                        st.warning(f"⚠️ Risk Level: {stock['risk_level']}")
                     else:
-                        st.success(f"✅ 风险等级: {stock['risk_level']}")
+                        st.success(f"✅ Risk Level: {stock['risk_level']}")
                 
                 st.markdown("---")
 else:
-    st.warning("没有找到符合筛选条件的股票，请调整筛选条件。")
+    st.warning("No stocks found matching the filter criteria. Please adjust your filters.")
 
-# 数据可视化部分
+# Data visualization section
 st.markdown("---")
-st.subheader("📈 市场概览")
+st.subheader("📈 Market Overview")
 
 if len(recommended_stocks) > 0:
-    # 创建三个图表
+    # Create three charts
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        # 市盈率分布图
+        # P/E ratio distribution
         fig_pe = px.bar(
             recommended_stocks.head(5),
             x='name',
             y='pe_ratio',
-            title='TOP5 市盈率对比',
+            title='TOP5 P/E Ratio Comparison',
             color='pe_ratio',
             color_continuous_scale='Viridis'
         )
         st.plotly_chart(fig_pe, use_container_width=True)
     
     with col2:
-        # 成长性对比
+        # Growth comparison
         fig_growth = go.Figure(data=[
-            go.Bar(name='营收增长', x=recommended_stocks.head(5)['name'], 
+            go.Bar(name='Revenue Growth', x=recommended_stocks.head(5)['name'], 
                    y=recommended_stocks.head(5)['revenue_growth']),
-            go.Bar(name='利润增长', x=recommended_stocks.head(5)['name'], 
+            go.Bar(name='Profit Growth', x=recommended_stocks.head(5)['name'], 
                    y=recommended_stocks.head(5)['profit_growth'])
         ])
-        fig_growth.update_layout(title='TOP5 成长性对比', barmode='group')
+        fig_growth.update_layout(title='TOP5 Growth Comparison', barmode='group')
         st.plotly_chart(fig_growth, use_container_width=True)
     
     with col3:
-        # 推荐分数雷达图
+        # Recommendation score radar chart
         top_stock = recommended_stocks.iloc[0]
-        categories = ['估值', '成长', '技术', '地位', '综合']
+        categories = ['Valuation', 'Growth', 'Technical', 'Position', 'Overall']
         values = [
-            max(0, 100 - (top_stock['pe_ratio'] - 15) * 3),  # 估值分数
-            min(100, top_stock['profit_growth'] * 4),        # 成长分数
-            75 if top_stock['macd_signal'] == '金叉' else 50, # 技术分数
-            90 if '龙头' in str(top_stock['tags']) else 60,   # 地位分数
-            top_stock['recommend_score']                      # 综合分数
+            max(0, 100 - (top_stock['pe_ratio'] - 15) * 3),  # Valuation score
+            min(100, top_stock['profit_growth'] * 4),        # Growth score
+            75 if top_stock['macd_signal'] == 'Golden Cross' else 50, # Technical score
+            90 if 'Leader' in str(top_stock['tags']) else 60,   # Position score
+            top_stock['recommend_score']                      # Overall score
         ]
         
         fig_radar = go.Figure(data=go.Scatterpolar(
@@ -366,74 +366,68 @@ if len(recommended_stocks) > 0:
                     range=[0, 100]
                 )),
             showlegend=False,
-            title=f"{top_stock['name']} 多维度分析"
+            title=f"{top_stock['name']} Multi-dimensional Analysis"
         )
         
         st.plotly_chart(fig_radar, use_container_width=True)
 
-# 投资策略建议
+# Investment strategy suggestions
 st.markdown("---")
-st.subheader("💡 投资策略建议")
+st.subheader("💡 Investment Strategy Suggestions")
 
 strategy_cols = st.columns(2)
 
 with strategy_cols[0]:
-    st.markdown("""
-    ### 🎯 当前市场建议
+    st.markdown(f"""
+    ### 🎯 Current Market Suggestions
     
-    **基于您的风险偏好：** `{}`
+    **Based on your risk tolerance:** `{risk_tolerance}`
     
-    - **仓位配置：** 建议{}仓位操作
-    - **持股周期：** {}个月
-    - **重点关注：** {}板块
-    - **风险控制：** 单只股票不超过总仓位的{}%
-    """.format(
-        risk_tolerance,
-        "7-8成" if risk_tolerance in ["成长", "激进"] else "5-6成",
-        "6-12" if risk_tolerance in ["成长", "激进"] else "12-24",
-        selected_sector if selected_sector != "全部" else "消费、新能源",
-        20 if risk_tolerance in ["成长", "激进"] else 15
-    ))
+    - **Position Allocation:** Recommend { "70-80%" if risk_tolerance in ["Growth", "Aggressive"] else "50-60%" } allocation
+    - **Holding Period:** { "6-12" if risk_tolerance in ["Growth", "Aggressive"] else "12-24" } months
+    - **Focus Areas:** { selected_sector if selected_sector != "All" else "Consumer, New Energy" } sector
+    - **Risk Control:** Single stock not exceeding { 20 if risk_tolerance in ["Growth", "Aggressive"] else 15 }% of total portfolio
+    """)
 
 with strategy_cols[1]:
     st.markdown("""
-    ### 📋 注意事项
+    ### 📋 Important Notes
     
-    **技术面提醒：**
-    - MACD金叉信号需要成交量配合
-    - RSI超过70注意短期回调风险
-    - 关注布林带突破的有效性
+    **Technical Analysis Reminders:**
+    - MACD golden cross signals need volume confirmation
+    - RSI above 70 indicates potential short-term correction
+    - Watch for valid Bollinger Band breakouts
     
-    **基本面提醒：**
-    - 高PE股票需要更高的成长性支撑
-    - 关注季度财报发布时间
-    - 注意行业政策变化影响
+    **Fundamental Analysis Reminders:**
+    - High P/E stocks require higher growth support
+    - Pay attention to quarterly earnings release dates
+    - Monitor industry policy changes
     
-    **风险提示：** 股市有风险，投资需谨慎
+    **Risk Warning:** Stock market involves risks, invest carefully
     """)
 
-# 快速筛选按钮
+# Quick filter buttons
 st.sidebar.markdown("---")
-st.sidebar.subheader("🚀 快速筛选")
+st.sidebar.subheader("🚀 Quick Filters")
 
 quick_filter_cols = st.sidebar.columns(2)
 
 with quick_filter_cols[0]:
-    if st.button("消费龙头", use_container_width=True):
-        st.session_state.sector_filter = "消费"
+    if st.button("Consumer Leaders", use_container_width=True):
+        st.session_state.sector_filter = "Consumer"
         st.rerun()
 
 with quick_filter_cols[1]:
-    if st.button("低估值", use_container_width=True):
+    if st.button("Low Valuation", use_container_width=True):
         st.session_state.max_pe = 15
         st.rerun()
 
 st.sidebar.markdown("---")
-st.sidebar.subheader("📚 行业分布")
+st.sidebar.subheader("📚 Sector Distribution")
 
 sector_quick_cols = st.sidebar.columns(2)
 
-sectors_quick = ["新能源", "金融", "家电", "科技"]
+sectors_quick = ["New Energy", "Financial", "Home Appliances", "Technology"]
 for sector in sectors_quick:
     col = sector_quick_cols[sectors_quick.index(sector) % 2]
     with col:
@@ -441,37 +435,37 @@ for sector in sectors_quick:
             st.session_state.sector_filter = sector
             st.rerun()
 
-# 免责声明
-with st.sidebar.expander("⚠️ 免责声明"):
+# Disclaimer
+with st.sidebar.expander("⚠️ Disclaimer"):
     st.markdown("""
-    本系统仅为技术演示工具，不构成投资建议。
+    This system is for technical demonstration only and does not constitute investment advice.
     
-    **数据说明：**
-    - 股票数据为模拟生成
-    - 推荐算法仅为示例
-    - 实际投资请参考专业机构建议
+    **Data Information:**
+    - Stock data is simulated
+    - Recommendation algorithm is for demonstration only
+    - Actual investments should refer to professional advice
     
-    **风险提示：**
-    - 股市有风险，入市需谨慎
-    - 过往表现不代表未来收益
-    - 投资决策需要综合考虑多种因素
+    **Risk Warning:**
+    - Stock market involves risks
+    - Past performance does not indicate future returns
+    - Investment decisions require comprehensive consideration
     """)
 
-# 初始化session state
+# Initialize session state
 if 'sector_filter' not in st.session_state:
-    st.session_state.sector_filter = "全部"
+    st.session_state.sector_filter = "All"
 if 'max_pe' not in st.session_state:
     st.session_state.max_pe = 50
 
-# 页脚
+# Footer
 st.markdown("---")
 st.markdown(
     """
     <div style='text-align: center; color: #666;'>
-    <p>A股股票推荐系统 | 技术分析演示工具</p>
+    <p>A-Share Stock Recommendation System | Technical Analysis Tool</p>
     <p>Arts & Advanced Big Data | Week 10 - Open API Integration</p>
     <p>Sungkyunkwan University | Prof. Jahwan Koo | 2024</p>
-    <p>数据仅供参考，不构成投资建议</p>
+    <p>Data for reference only, not investment advice</p>
     </div>
     """,
     unsafe_allow_html=True
