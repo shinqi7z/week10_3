@@ -10,106 +10,126 @@ import json
 
 # Page configuration
 st.set_page_config(
-    page_title="A-Share Stock Recommendation System",
+    page_title="US Stock Recommendation System",
     page_icon="📈",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 # App title
-st.title("📈 A-Share Stock Recommendation System")
+st.title("📈 US Stock Recommendation System")
 st.markdown("""
 ### Easy-to-understand stock analysis tool for beginners
 **Intelligent recommendation system based on technical indicators and fundamentals**
 """)
 
-class AStockRecommender:
+class USStockRecommender:
     def __init__(self):
-        # Sample data for CSI 300 constituent stocks
+        # Sample data for major US stocks
         self.stocks_data = self.generate_sample_data()
         
     def generate_sample_data(self):
-        """Generate sample stock data"""
+        """Generate sample stock data for US market"""
         stocks = [
             {
-                'code': '000858', 'name': 'Wuliangye', 'sector': 'Consumer',
-                'current_price': 168.50, 'change_rate': 2.34,
-                'volume': 8.5, 'market_cap': 6500,
-                'pe_ratio': 28.5, 'pb_ratio': 6.2,
-                'revenue_growth': 15.2, 'profit_growth': 18.7,
-                'rsi': 62.3, 'macd_signal': 'Golden Cross', 'bollinger_position': 'Middle Band',
-                'recommend_score': 92.5, 'risk_level': 'Low-Medium',
-                'tags': ['Liquor Leader', 'High ROE', 'Stable Growth']
+                'symbol': 'AAPL', 'name': 'Apple Inc.', 'sector': 'Technology',
+                'current_price': 185.20, 'change_rate': 2.15,
+                'volume': 45.8, 'market_cap': 2850,
+                'pe_ratio': 31.2, 'pb_ratio': 38.5,
+                'revenue_growth': 2.1, 'profit_growth': 5.8,
+                'rsi': 58.3, 'macd_signal': 'Golden Cross', 'bollinger_position': 'Upper Band',
+                'recommend_score': 85.5, 'risk_level': 'Low',
+                'tags': ['Tech Giant', 'Strong Brand', 'Cash Rich']
             },
             {
-                'code': '600519', 'name': 'Kweichow Moutai', 'sector': 'Consumer',
-                'current_price': 1750.80, 'change_rate': 1.56,
-                'volume': 12.3, 'market_cap': 22000,
-                'pe_ratio': 35.2, 'pb_ratio': 12.8,
-                'revenue_growth': 12.8, 'profit_growth': 16.3,
-                'rsi': 58.7, 'macd_signal': 'Golden Cross', 'bollinger_position': 'Upper Band',
-                'recommend_score': 88.7, 'risk_level': 'Low',
-                'tags': ['Liquor Leader', 'Scarcity', 'Brand Value']
+                'symbol': 'MSFT', 'name': 'Microsoft Corp.', 'sector': 'Technology',
+                'current_price': 420.72, 'change_rate': 1.89,
+                'volume': 28.3, 'market_cap': 3120,
+                'pe_ratio': 36.8, 'pb_ratio': 13.2,
+                'revenue_growth': 17.6, 'profit_growth': 26.8,
+                'rsi': 62.1, 'macd_signal': 'Golden Cross', 'bollinger_position': 'Middle Band',
+                'recommend_score': 91.2, 'risk_level': 'Low',
+                'tags': ['Cloud Leader', 'AI Innovation', 'Enterprise Focus']
             },
             {
-                'code': '300750', 'name': 'CATL', 'sector': 'New Energy',
-                'current_price': 198.30, 'change_rate': 3.45,
-                'volume': 15.8, 'market_cap': 8700,
-                'pe_ratio': 42.1, 'pb_ratio': 8.9,
-                'revenue_growth': 25.7, 'profit_growth': 32.1,
-                'rsi': 65.2, 'macd_signal': 'Golden Cross', 'bollinger_position': 'Upper Band',
-                'recommend_score': 85.3, 'risk_level': 'Medium',
-                'tags': ['Battery Leader', 'High Growth', 'New Energy']
+                'symbol': 'GOOGL', 'name': 'Alphabet Inc.', 'sector': 'Technology',
+                'current_price': 175.35, 'change_rate': 3.42,
+                'volume': 32.1, 'market_cap': 2200,
+                'pe_ratio': 26.4, 'pb_ratio': 6.8,
+                'revenue_growth': 11.2, 'profit_growth': 23.4,
+                'rsi': 59.7, 'macd_signal': 'Golden Cross', 'bollinger_position': 'Upper Band',
+                'recommend_score': 87.8, 'risk_level': 'Low-Medium',
+                'tags': ['Search Dominance', 'AI Leadership', 'Diversified Revenue']
             },
             {
-                'code': '601318', 'name': 'Ping An Insurance', 'sector': 'Financial',
-                'current_price': 48.92, 'change_rate': 0.85,
-                'volume': 9.2, 'market_cap': 8900,
-                'pe_ratio': 8.9, 'pb_ratio': 1.2,
-                'revenue_growth': 5.3, 'profit_growth': 7.8,
-                'rsi': 45.6, 'macd_signal': 'Approaching Golden Cross', 'bollinger_position': 'Lower Band',
-                'recommend_score': 82.1, 'risk_level': 'Low',
-                'tags': ['Insurance Leader', 'Low Valuation', 'High Dividend']
-            },
-            {
-                'code': '000333', 'name': 'Midea Group', 'sector': 'Home Appliances',
-                'current_price': 56.78, 'change_rate': 1.23,
-                'volume': 6.7, 'market_cap': 4000,
-                'pe_ratio': 15.6, 'pb_ratio': 3.2,
-                'revenue_growth': 8.9, 'profit_growth': 12.4,
-                'rsi': 52.3, 'macd_signal': 'Golden Cross', 'bollinger_position': 'Middle Band',
-                'recommend_score': 79.8, 'risk_level': 'Low-Medium',
-                'tags': ['Home Appliance Leader', 'Globalization', 'Stable Cash Flow']
-            },
-            {
-                'code': '600036', 'name': 'China Merchants Bank', 'sector': 'Financial',
-                'current_price': 32.45, 'change_rate': 0.93,
-                'volume': 11.5, 'market_cap': 8200,
-                'pe_ratio': 6.8, 'pb_ratio': 1.1,
-                'revenue_growth': 7.2, 'profit_growth': 9.5,
-                'rsi': 48.9, 'macd_signal': 'Approaching Golden Cross', 'bollinger_position': 'Lower Band',
-                'recommend_score': 77.6, 'risk_level': 'Low',
-                'tags': ['Retail Banking', 'Asset Quality', 'High ROE']
-            },
-            {
-                'code': '000001', 'name': 'Ping An Bank', 'sector': 'Financial',
-                'current_price': 12.34, 'change_rate': 1.15,
-                'volume': 7.8, 'market_cap': 2400,
-                'pe_ratio': 7.2, 'pb_ratio': 0.9,
-                'revenue_growth': 6.8, 'profit_growth': 8.9,
-                'rsi': 46.7, 'macd_signal': 'Approaching Golden Cross', 'bollinger_position': 'Lower Band',
-                'recommend_score': 75.2, 'risk_level': 'Medium',
-                'tags': ['Digital Transformation', 'Retail Transformation', 'Undervalued']
-            },
-            {
-                'code': '601888', 'name': 'China Tourism Group', 'sector': 'Consumer',
-                'current_price': 89.67, 'change_rate': 2.78,
-                'volume': 5.3, 'market_cap': 1800,
-                'pe_ratio': 32.1, 'pb_ratio': 7.8,
-                'revenue_growth': 18.9, 'profit_growth': 22.4,
-                'rsi': 61.8, 'macd_signal': 'Golden Cross', 'bollinger_position': 'Middle Band',
+                'symbol': 'AMZN', 'name': 'Amazon.com Inc.', 'sector': 'Consumer Cyclical',
+                'current_price': 178.22, 'change_rate': 2.78,
+                'volume': 38.9, 'market_cap': 1830,
+                'pe_ratio': 62.3, 'pb_ratio': 8.9,
+                'revenue_growth': 13.2, 'profit_growth': 228.9,
+                'rsi': 63.5, 'macd_signal': 'Golden Cross', 'bollinger_position': 'Upper Band',
                 'recommend_score': 83.4, 'risk_level': 'Medium',
-                'tags': ['Duty-free Leader', 'Consumption Upgrade', 'Channel Advantage']
+                'tags': ['E-commerce Leader', 'AWS Cloud', 'Logistics Powerhouse']
+            },
+            {
+                'symbol': 'NVDA', 'name': 'NVIDIA Corp.', 'sector': 'Technology',
+                'current_price': 950.02, 'change_rate': 4.56,
+                'volume': 52.7, 'market_cap': 2350,
+                'pe_ratio': 76.8, 'pb_ratio': 49.2,
+                'revenue_growth': 265.3, 'profit_growth': 586.8,
+                'rsi': 68.9, 'macd_signal': 'Golden Cross', 'bollinger_position': 'Upper Band',
+                'recommend_score': 88.9, 'risk_level': 'High',
+                'tags': ['AI Chip Leader', 'High Growth', 'Market Dominance']
+            },
+            {
+                'symbol': 'TSLA', 'name': 'Tesla Inc.', 'sector': 'Consumer Cyclical',
+                'current_price': 245.18, 'change_rate': -1.23,
+                'volume': 98.5, 'market_cap': 780,
+                'pe_ratio': 72.4, 'pb_ratio': 11.3,
+                'revenue_growth': 3.5, 'profit_growth': -24.8,
+                'rsi': 45.2, 'macd_signal': 'Death Cross', 'bollinger_position': 'Lower Band',
+                'recommend_score': 62.3, 'risk_level': 'High',
+                'tags': ['EV Pioneer', 'Innovation Focus', 'Volatile Stock']
+            },
+            {
+                'symbol': 'JPM', 'name': 'JPMorgan Chase', 'sector': 'Financial Services',
+                'current_price': 198.45, 'change_rate': 0.85,
+                'volume': 12.8, 'market_cap': 570,
+                'pe_ratio': 11.8, 'pb_ratio': 1.8,
+                'revenue_growth': 15.3, 'profit_growth': 6.2,
+                'rsi': 52.1, 'macd_signal': 'Approaching Golden Cross', 'bollinger_position': 'Middle Band',
+                'recommend_score': 78.6, 'risk_level': 'Low',
+                'tags': ['Banking Leader', 'Strong Dividend', 'Stable']
+            },
+            {
+                'symbol': 'JNJ', 'name': 'Johnson & Johnson', 'sector': 'Healthcare',
+                'current_price': 157.89, 'change_rate': 0.45,
+                'volume': 8.9, 'market_cap': 380,
+                'pe_ratio': 15.2, 'pb_ratio': 5.8,
+                'revenue_growth': 6.8, 'profit_growth': 18.9,
+                'rsi': 48.7, 'macd_signal': 'Approaching Golden Cross', 'bollinger_position': 'Lower Band',
+                'recommend_score': 75.4, 'risk_level': 'Low',
+                'tags': ['Healthcare Giant', 'Dividend Aristocrat', 'Defensive']
+            },
+            {
+                'symbol': 'V', 'name': 'Visa Inc.', 'sector': 'Financial Services',
+                'current_price': 279.34, 'change_rate': 1.23,
+                'volume': 10.2, 'market_cap': 560,
+                'pe_ratio': 32.1, 'pb_ratio': 14.8,
+                'revenue_growth': 9.8, 'profit_growth': 17.2,
+                'rsi': 56.3, 'macd_signal': 'Golden Cross', 'bollinger_position': 'Middle Band',
+                'recommend_score': 82.7, 'risk_level': 'Low-Medium',
+                'tags': ['Payment Leader', 'Recurring Revenue', 'Global Network']
+            },
+            {
+                'symbol': 'WMT', 'name': 'Walmart Inc.', 'sector': 'Consumer Defensive',
+                'current_price': 67.45, 'change_rate': 0.78,
+                'volume': 15.3, 'market_cap': 540,
+                'pe_ratio': 31.8, 'pb_ratio': 5.9,
+                'revenue_growth': 5.7, 'profit_growth': 32.8,
+                'rsi': 54.2, 'macd_signal': 'Golden Cross', 'bollinger_position': 'Middle Band',
+                'recommend_score': 79.2, 'risk_level': 'Low',
+                'tags': ['Retail Giant', 'E-commerce Growth', 'Stable Business']
             }
         ]
         return pd.DataFrame(stocks)
@@ -118,40 +138,53 @@ class AStockRecommender:
         """Calculate recommendation score (simulated algorithm)"""
         score = 0
         
-        # Valuation factors (30%)
+        # Valuation factors (25%)
         if row['pe_ratio'] < 15:
-            score += 30
-        elif row['pe_ratio'] < 25:
             score += 25
+        elif row['pe_ratio'] < 25:
+            score += 22
         elif row['pe_ratio'] < 35:
-            score += 20
-        else:
+            score += 18
+        elif row['pe_ratio'] < 50:
             score += 15
+        else:
+            score += 10
         
         # Growth factors (30%)
-        growth_score = min(30, row['profit_growth'] * 0.8)
-        score += growth_score
-        
-        # Technical indicators (20%)
-        if row['macd_signal'] == 'Golden Cross':
+        if row['profit_growth'] > 50:
+            score += 30
+        elif row['profit_growth'] > 25:
+            score += 25
+        elif row['profit_growth'] > 10:
+            score += 20
+        elif row['profit_growth'] > 0:
             score += 15
+        else:
+            score += 5
+        
+        # Technical indicators (25%)
+        if row['macd_signal'] == 'Golden Cross':
+            score += 20
         elif row['macd_signal'] == 'Approaching Golden Cross':
-            score += 10
+            score += 15
         else:
             score += 5
             
         if row['rsi'] > 30 and row['rsi'] < 70:
             score += 5
         
-        # Market position (20%)
-        if 'Leader' in str(row['tags']):
-            score += 20
+        # Market position and stability (20%)
+        if any(tag in ['Leader', 'Giant', 'Dominance'] for tag in row['tags']):
+            score += 15
         else:
             score += 10
             
+        if row['risk_level'] in ['Low', 'Low-Medium']:
+            score += 5
+            
         return min(100, score)
     
-    def get_recommended_stocks(self, min_market_cap=1000, max_pe=50, sector_filter=None):
+    def get_recommended_stocks(self, min_market_cap=100, max_pe=100, sector_filter=None, risk_filter=None):
         """Get recommended stock list"""
         df = self.stocks_data.copy()
         
@@ -164,6 +197,9 @@ class AStockRecommender:
             
         if sector_filter and sector_filter != "All":
             df = df[df['sector'] == sector_filter]
+            
+        if risk_filter and risk_filter != "All":
+            df = df[df['risk_level'] == risk_filter]
         
         # Calculate recommendation score
         df['recommend_score'] = df.apply(self.calculate_recommendation_score, axis=1)
@@ -174,29 +210,33 @@ class AStockRecommender:
         return df
 
 # Initialize recommendation system
-recommender = AStockRecommender()
+recommender = USStockRecommender()
 
 # Sidebar - Analysis Settings
 st.sidebar.header("🔧 Analysis Settings")
 
 # Sector filter
-sectors = ["All", "Consumer", "New Energy", "Financial", "Home Appliances"]
+sectors = ["All", "Technology", "Financial Services", "Healthcare", "Consumer Cyclical", "Consumer Defensive"]
 selected_sector = st.sidebar.selectbox("Sector Filter", sectors, index=0)
+
+# Risk level filter
+risk_levels = ["All", "Low", "Low-Medium", "Medium", "High"]
+selected_risk = st.sidebar.selectbox("Risk Level Filter", risk_levels, index=0)
 
 # Valuation filter
 min_market_cap = st.sidebar.number_input(
-    "Minimum Market Cap (Billion CNY)", 
+    "Minimum Market Cap (Billion USD)", 
     min_value=0, 
-    max_value=10000, 
-    value=1000,
-    step=100
+    max_value=5000, 
+    value=100,
+    step=50
 )
 
 max_pe = st.sidebar.slider(
     "Maximum P/E Ratio", 
     min_value=0, 
-    max_value=100, 
-    value=50
+    max_value=200, 
+    value=100
 )
 
 # Risk preference
@@ -217,7 +257,8 @@ st.markdown("---")
 recommended_stocks = recommender.get_recommended_stocks(
     min_market_cap=min_market_cap,
     max_pe=max_pe,
-    sector_filter=selected_sector
+    sector_filter=selected_sector,
+    risk_filter=selected_risk if selected_risk != "All" else None
 )
 
 # Display recommended stocks
@@ -234,18 +275,20 @@ if len(recommended_stocks) > 0:
             # Create card container
             with st.container():
                 # Title row
-                st.markdown(f"### #{idx + 1} {stock['name']} ({stock['code']})")
+                st.markdown(f"### #{idx + 1} {stock['name']} ({stock['symbol']})")
                 
                 # Price and basic info
                 col1, col2 = st.columns(2)
                 with col1:
+                    change_color = "normal" if stock['change_rate'] >= 0 else "inverse"
                     st.metric(
                         "Current Price", 
-                        f"¥{stock['current_price']:.2f}",
-                        delta=f"+{stock['change_rate']}%"
+                        f"${stock['current_price']:.2f}",
+                        delta=f"{stock['change_rate']}%",
+                        delta_color=change_color
                     )
                 with col2:
-                    st.metric("Market Cap", f"{stock['market_cap']}B CNY")
+                    st.metric("Market Cap", f"${stock['market_cap']}B")
                 
                 # Detailed information
                 with st.expander("📊 Detailed Analysis", expanded=True):
@@ -286,24 +329,38 @@ if len(recommended_stocks) > 0:
                     # Specific reasons
                     reasons = []
                     if stock['pe_ratio'] < 20:
+                        reasons.append("Attractive valuation")
+                    elif stock['pe_ratio'] < 35:
                         reasons.append("Reasonable valuation")
-                    if stock['profit_growth'] > 15:
-                        reasons.append("High growth potential")
-                    if 'Leader' in str(stock['tags']):
-                        reasons.append("Industry leader position")
+                        
+                    if stock['profit_growth'] > 20:
+                        reasons.append("Strong growth")
+                    elif stock['profit_growth'] > 10:
+                        reasons.append("Solid growth")
+                        
+                    if 'Leader' in str(stock['tags']) or 'Giant' in str(stock['tags']):
+                        reasons.append("Market leader")
+                        
                     if stock['macd_signal'] == 'Golden Cross':
-                        reasons.append("Technical golden cross signal")
+                        reasons.append("Technical bullish signal")
                     
                     if reasons:
                         st.write("**Reasons:** " + ", ".join(reasons))
                     
                     # Risk warning
-                    if stock['risk_level'] == 'High':
-                        st.error(f"⚠️ Risk Level: {stock['risk_level']}")
-                    elif stock['risk_level'] == 'Medium':
-                        st.warning(f"⚠️ Risk Level: {stock['risk_level']}")
-                    else:
-                        st.success(f"✅ Risk Level: {stock['risk_level']}")
+                    risk_color = {
+                        'Low': 'green',
+                        'Low-Medium': 'blue', 
+                        'Medium': 'orange',
+                        'High': 'red'
+                    }.get(stock['risk_level'], 'gray')
+                    
+                    st.write(f"**Risk Level:** :{risk_color}[{stock['risk_level']}]")
+                    
+                    # Company tags
+                    st.write("**Key Attributes:**")
+                    tags_html = " ".join([f"`{tag}`" for tag in stock['tags']])
+                    st.markdown(tags_html)
                 
                 st.markdown("---")
 else:
@@ -320,24 +377,30 @@ if len(recommended_stocks) > 0:
     with col1:
         # P/E ratio distribution
         fig_pe = px.bar(
-            recommended_stocks.head(5),
-            x='name',
+            recommended_stocks.head(6),
+            x='symbol',
             y='pe_ratio',
-            title='TOP5 P/E Ratio Comparison',
+            title='TOP 6 P/E Ratio Comparison',
             color='pe_ratio',
             color_continuous_scale='Viridis'
         )
+        fig_pe.update_layout(xaxis_title="Stock Symbol", yaxis_title="P/E Ratio")
         st.plotly_chart(fig_pe, use_container_width=True)
     
     with col2:
         # Growth comparison
         fig_growth = go.Figure(data=[
-            go.Bar(name='Revenue Growth', x=recommended_stocks.head(5)['name'], 
-                   y=recommended_stocks.head(5)['revenue_growth']),
-            go.Bar(name='Profit Growth', x=recommended_stocks.head(5)['name'], 
-                   y=recommended_stocks.head(5)['profit_growth'])
+            go.Bar(name='Revenue Growth', x=recommended_stocks.head(6)['symbol'], 
+                   y=recommended_stocks.head(6)['revenue_growth']),
+            go.Bar(name='Profit Growth', x=recommended_stocks.head(6)['symbol'], 
+                   y=recommended_stocks.head(6)['profit_growth'])
         ])
-        fig_growth.update_layout(title='TOP5 Growth Comparison', barmode='group')
+        fig_growth.update_layout(
+            title='TOP 6 Growth Comparison', 
+            barmode='group',
+            xaxis_title="Stock Symbol",
+            yaxis_title="Growth Rate (%)"
+        )
         st.plotly_chart(fig_growth, use_container_width=True)
     
     with col3:
@@ -345,10 +408,10 @@ if len(recommended_stocks) > 0:
         top_stock = recommended_stocks.iloc[0]
         categories = ['Valuation', 'Growth', 'Technical', 'Position', 'Overall']
         values = [
-            max(0, 100 - (top_stock['pe_ratio'] - 15) * 3),  # Valuation score
-            min(100, top_stock['profit_growth'] * 4),        # Growth score
-            75 if top_stock['macd_signal'] == 'Golden Cross' else 50, # Technical score
-            90 if 'Leader' in str(top_stock['tags']) else 60,   # Position score
+            max(0, 100 - (top_stock['pe_ratio'] - 15) * 2),  # Valuation score
+            min(100, top_stock['profit_growth'] * 2),        # Growth score
+            80 if top_stock['macd_signal'] == 'Golden Cross' else 50, # Technical score
+            90 if any(tag in ['Leader', 'Giant'] for tag in top_stock['tags']) else 60,   # Position score
             top_stock['recommend_score']                      # Overall score
         ]
         
@@ -356,7 +419,7 @@ if len(recommended_stocks) > 0:
             r=values,
             theta=categories,
             fill='toself',
-            name=top_stock['name']
+            name=top_stock['symbol']
         ))
         
         fig_radar.update_layout(
@@ -366,10 +429,22 @@ if len(recommended_stocks) > 0:
                     range=[0, 100]
                 )),
             showlegend=False,
-            title=f"{top_stock['name']} Multi-dimensional Analysis"
+            title=f"{top_stock['symbol']} Multi-dimensional Analysis"
         )
         
         st.plotly_chart(fig_radar, use_container_width=True)
+        
+    # Sector distribution
+    st.markdown("---")
+    st.subheader("🏢 Sector Distribution")
+    
+    sector_counts = recommended_stocks['sector'].value_counts()
+    fig_sector = px.pie(
+        values=sector_counts.values,
+        names=sector_counts.index,
+        title="Recommended Stocks by Sector"
+    )
+    st.plotly_chart(fig_sector, use_container_width=True)
 
 # Investment strategy suggestions
 st.markdown("---")
@@ -378,15 +453,40 @@ st.subheader("💡 Investment Strategy Suggestions")
 strategy_cols = st.columns(2)
 
 with strategy_cols[0]:
+    allocation_map = {
+        "Conservative": "30-40%",
+        "Moderate": "50-60%", 
+        "Balanced": "60-70%",
+        "Growth": "70-80%",
+        "Aggressive": "80-90%"
+    }
+    
+    period_map = {
+        "Conservative": "24-36",
+        "Moderate": "18-24", 
+        "Balanced": "12-18",
+        "Growth": "6-12",
+        "Aggressive": "3-6"
+    }
+    
+    single_stock_map = {
+        "Conservative": "10",
+        "Moderate": "15", 
+        "Balanced": "20",
+        "Growth": "25",
+        "Aggressive": "30"
+    }
+    
     st.markdown(f"""
     ### 🎯 Current Market Suggestions
     
     **Based on your risk tolerance:** `{risk_tolerance}`
     
-    - **Position Allocation:** Recommend { "70-80%" if risk_tolerance in ["Growth", "Aggressive"] else "50-60%" } allocation
-    - **Holding Period:** { "6-12" if risk_tolerance in ["Growth", "Aggressive"] else "12-24" } months
-    - **Focus Areas:** { selected_sector if selected_sector != "All" else "Consumer, New Energy" } sector
-    - **Risk Control:** Single stock not exceeding { 20 if risk_tolerance in ["Growth", "Aggressive"] else 15 }% of total portfolio
+    - **Position Allocation:** Recommend {allocation_map[risk_tolerance]} allocation
+    - **Holding Period:** {period_map[risk_tolerance]} months
+    - **Focus Areas:** {selected_sector if selected_sector != "All" else "Technology, Financial Services"} sector
+    - **Risk Control:** Single stock not exceeding {single_stock_map[risk_tolerance]}% of total portfolio
+    - **Diversification:** Minimum {3 if risk_tolerance in ["Growth", "Aggressive"] else 5} different stocks
     """)
 
 with strategy_cols[1]:
@@ -397,13 +497,15 @@ with strategy_cols[1]:
     - MACD golden cross signals need volume confirmation
     - RSI above 70 indicates potential short-term correction
     - Watch for valid Bollinger Band breakouts
+    - Consider overall market trend and sector rotation
     
     **Fundamental Analysis Reminders:**
     - High P/E stocks require higher growth support
     - Pay attention to quarterly earnings release dates
-    - Monitor industry policy changes
+    - Monitor Fed policy changes and interest rates
+    - Consider geopolitical and macroeconomic factors
     
-    **Risk Warning:** Stock market involves risks, invest carefully
+    **Risk Warning:** Stock market involves risks, invest carefully. Past performance doesn't guarantee future results.
     """)
 
 # Quick filter buttons
@@ -413,21 +515,21 @@ st.sidebar.subheader("🚀 Quick Filters")
 quick_filter_cols = st.sidebar.columns(2)
 
 with quick_filter_cols[0]:
-    if st.button("Consumer Leaders", use_container_width=True):
-        st.session_state.sector_filter = "Consumer"
+    if st.button("Tech Leaders", use_container_width=True):
+        st.session_state.sector_filter = "Technology"
         st.rerun()
 
 with quick_filter_cols[1]:
-    if st.button("Low Valuation", use_container_width=True):
-        st.session_state.max_pe = 15
+    if st.button("Low Risk", use_container_width=True):
+        st.session_state.risk_filter = "Low"
         st.rerun()
 
 st.sidebar.markdown("---")
-st.sidebar.subheader("📚 Sector Distribution")
+st.sidebar.subheader("📚 Popular Sectors")
 
 sector_quick_cols = st.sidebar.columns(2)
 
-sectors_quick = ["New Energy", "Financial", "Home Appliances", "Technology"]
+sectors_quick = ["Technology", "Financial Services", "Healthcare", "Consumer Cyclical"]
 for sector in sectors_quick:
     col = sector_quick_cols[sectors_quick.index(sector) % 2]
     with col:
@@ -435,37 +537,51 @@ for sector in sectors_quick:
             st.session_state.sector_filter = sector
             st.rerun()
 
+# Market sentiment indicator
+st.sidebar.markdown("---")
+st.sidebar.subheader("📊 Market Sentiment")
+
+current_sentiment = "🟢 Bullish" if len(recommended_stocks) > 5 else "🟡 Neutral" if len(recommended_stocks) > 2 else "🔴 Cautious"
+st.sidebar.metric("Overall Sentiment", current_sentiment)
+
+avg_score = recommended_stocks['recommend_score'].mean() if len(recommended_stocks) > 0 else 0
+st.sidebar.metric("Average Score", f"{avg_score:.1f}")
+
 # Disclaimer
 with st.sidebar.expander("⚠️ Disclaimer"):
     st.markdown("""
     This system is for technical demonstration only and does not constitute investment advice.
     
     **Data Information:**
-    - Stock data is simulated
-    - Recommendation algorithm is for demonstration only
-    - Actual investments should refer to professional advice
+    - Stock data is simulated for demonstration
+    - Recommendation algorithm is for educational purposes
+    - Actual investments should refer to professional financial advice
+    - Prices and metrics are not real-time
     
     **Risk Warning:**
-    - Stock market involves risks
+    - Stock market involves significant risks
     - Past performance does not indicate future returns
-    - Investment decisions require comprehensive consideration
+    - Investment decisions require comprehensive research
+    - Diversification is essential for risk management
     """)
 
 # Initialize session state
 if 'sector_filter' not in st.session_state:
     st.session_state.sector_filter = "All"
+if 'risk_filter' not in st.session_state:
+    st.session_state.risk_filter = "All"
 if 'max_pe' not in st.session_state:
-    st.session_state.max_pe = 50
+    st.session_state.max_pe = 100
 
 # Footer
 st.markdown("---")
 st.markdown(
     """
     <div style='text-align: center; color: #666;'>
-    <p>A-Share Stock Recommendation System | Technical Analysis Tool</p>
+    <p>US Stock Recommendation System | Technical Analysis Tool</p>
     <p>Arts & Advanced Big Data | Week 10 - Open API Integration</p>
     <p>Sungkyunkwan University | Prof. Jahwan Koo | 2024</p>
-    <p>Data for reference only, not investment advice</p>
+    <p>Data for demonstration only, not investment advice</p>
     </div>
     """,
     unsafe_allow_html=True
